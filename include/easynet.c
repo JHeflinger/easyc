@@ -3,10 +3,10 @@
 #include "easymemory.h"
 #include <string.h>
 
-BOOL s_ez_network_initialized = FALSE;
-ez_ClientList* s_ez_client_list = NULL;
-ez_ServerList* s_ez_server_list = NULL;
-ez_ConnectionList* s_ez_connection_list = NULL;
+static BOOL s_ez_network_initialized = FALSE;
+static ez_ClientList* s_ez_client_list = NULL;
+static ez_ServerList* s_ez_server_list = NULL;
+static ez_ConnectionList* s_ez_connection_list = NULL;
 
 ez_Buffer* ez_generate_buffer(size_t size) {
 	ez_Buffer* buffer = EZ_ALLOC(1, sizeof(ez_Buffer));

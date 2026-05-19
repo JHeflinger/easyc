@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-size_t g_ezn_allocated_bytes = 0;
+static size_t g_ezn_allocated_bytes = 0;
 
 void* ez_reallocate(void* ptr, size_t amount, size_t size) {
     void* original_ptr = (void*)((uint8_t*)ptr - sizeof(size_t));
