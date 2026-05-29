@@ -9,5 +9,6 @@
 #include "easybasics.h"
 #include "easymath.h"
 #include "easyhash.h"
+#include "easytime.h"
 
 #endif
