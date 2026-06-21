@@ -2,6 +2,7 @@
 #define EASYBASICS_H
 
 #include "easyobjects.h"
+#include "easysort.h"
 #include <stdlib.h>
 #include <stddef.h>
 
@@ -32,5 +33,8 @@ DECLARE_PQUEUE(uint16_t);
 DECLARE_PQUEUE(int16_t);
 DECLARE_PQUEUE(uint8_t);
 DECLARE_PQUEUE(int8_t);
+
+DECLARE_EASYSORT(int);
+DECLARE_EASYSORT(float);
 
 #endif

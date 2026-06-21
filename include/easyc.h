@@ -10,5 +10,6 @@
 #include "easymath.h"
 #include "easyhash.h"
 #include "easytime.h"
+#include "easysort.h"
 
 #endif

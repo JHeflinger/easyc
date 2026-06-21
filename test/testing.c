@@ -47,6 +47,9 @@ EZ_THREAD_RETURN_TYPE unsafe_function(EZ_THREAD_PARAMETER_TYPE params) {
 	return 0;
 }
 
+float int_score(int x) { return (float)x; }
+float int_score_neg(int x) { return -(float)x; }
+
 int main() {
 	// easybool tests
 	EZTEST(TRUE == 1, "Truth bool");
@@ -318,7 +321,135 @@ int main() {
 	EZTEST(EZ_DISTANCE(3, 3, -3, -3) == (float)sqrt(72), "EasyMath distance square");
 	EZTEST(EZ_DISTANCE(1, 10, 3, 4) == (float)sqrt(40), "EasyMath distance 2D");
 
+    // easysort tests
+    size_t before_es_tests = EZ_ALLOCATED();
+    ARRLIST_int slist = { 0 };
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 7);
+    ARRLIST_int_add(&slist, 9);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 5, "EasySort already sorted size");
+    success = slist.data[0]==1 && slist.data[1]==3 && slist.data[2]==5 && slist.data[3]==7 && slist.data[4]==9;
+    EZTEST(success, "EasySort already sorted order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 2);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 7);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 5, "EasySort single dip size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= slist.data[i] >= slist.data[i - 1];
+    EZTEST(success, "EasySort single dip order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 9);
+    ARRLIST_int_add(&slist, 7);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 1);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 5, "EasySort reversed size");
+    success = slist.data[0]==1 && slist.data[1]==3 && slist.data[2]==5
+           && slist.data[3]==7 && slist.data[4]==9;
+    EZTEST(success, "EasySort reversed order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 42);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 1, "EasySort single element size");
+    EZTEST(slist.data[0] == 42, "EasySort single element value");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 2);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 2, "EasySort two elements sorted size");
+    EZTEST(slist.data[0]==1 && slist.data[1]==2, "EasySort two elements sorted order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 2);
+    ARRLIST_int_add(&slist, 1);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 2, "EasySort two elements reversed size");
+    EZTEST(slist.data[0]==1 && slist.data[1]==2, "EasySort two elements reversed order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 4);
+    ARRLIST_int_add(&slist, 4);
+    ARRLIST_int_add(&slist, 4);
+    ARRLIST_int_add(&slist, 4);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 4, "EasySort all equal size");
+    success = slist.data[0]==4 && slist.data[1]==4 && slist.data[2]==4 && slist.data[3]==4;
+    EZTEST(success, "EasySort all equal values");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 9);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 6, "EasySort duplicates size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= slist.data[i] >= slist.data[i - 1];
+    EZTEST(success, "EasySort duplicates order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, -10);
+    ARRLIST_int_add(&slist, -3);
+    ARRLIST_int_add(&slist, -7);
+    ARRLIST_int_add(&slist, 0);
+    ARRLIST_int_add(&slist, 5);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 5, "EasySort negatives size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= slist.data[i] >= slist.data[i - 1];
+    EZTEST(success, "EasySort negatives order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 2);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 4);
+    ARRLIST_int_add(&slist, 5);
+    EasySort_int(&slist, int_score_neg);
+    EZTEST(slist.size == 5, "EasySort inverted score size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= int_score_neg(slist.data[i]) >= int_score_neg(slist.data[i - 1]);
+    EZTEST(success, "EasySort inverted score order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 5);
+    ARRLIST_int_add(&slist, 2);
+    ARRLIST_int_add(&slist, 8);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 10);
+    ARRLIST_int_add(&slist, 4);
+    ARRLIST_int_add(&slist, 12);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 8, "EasySort multiple dips size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= slist.data[i] >= slist.data[i - 1];
+    EZTEST(success, "EasySort multiple dips order");
+    ARRLIST_int_clear(&slist);
+    ARRLIST_int_add(&slist, 99);
+    ARRLIST_int_add(&slist, 1);
+    ARRLIST_int_add(&slist, 2);
+    ARRLIST_int_add(&slist, 3);
+    ARRLIST_int_add(&slist, 4);
+    EasySort_int(&slist, int_score);
+    EZTEST(slist.size == 5, "EasySort high first element size");
+    success = 1;
+    for (size_t i = 1; i < slist.size; i++)
+        success &= slist.data[i] >= slist.data[i - 1];
+    EZTEST(success, "EasySort high first element order");
+    ARRLIST_int_clear(&slist);
+    EZTEST(before_es_tests == EZ_ALLOCATED(), "EasySort memory leak");
 	printf("\nTest suite results: %s%d%s/%d tests passed\n", 
 		passed_tests == total_tests ? EZ_GREEN : EZ_RED, passed_tests, EZ_RESET, total_tests);
+
 	return 0;
 }

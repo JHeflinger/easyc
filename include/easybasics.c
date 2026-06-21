@@ -27,3 +27,6 @@ IMPL_PQUEUE(uint16_t);
 IMPL_PQUEUE(int16_t);
 IMPL_PQUEUE(uint8_t);
 IMPL_PQUEUE(int8_t);
+
+IMPL_EASYSORT(int);
+IMPL_EASYSORT(float);
