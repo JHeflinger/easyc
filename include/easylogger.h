@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define EZ_TRACE(...)  {printf("[TRACE] ");  printf(__VA_ARGS__); printf("\n");}
 #define EZ_INFO(...)  {printf("%s[INFO]%s  ", EZ_GREEN, EZ_RESET);  printf(__VA_ARGS__); printf("\n");}
 #define EZ_ERROR(...) {printf("%s[ERROR]%s Error detected in %s:%d - \"", EZ_RED, EZ_RESET, __FILE__, __LINE__); printf(__VA_ARGS__); printf("\"\n");}
 #define EZ_FATAL(...) {printf("%s[FATAL]%s Critical failure in %s:%d - \"", EZ_RED, EZ_RESET, __FILE__, __LINE__); printf(__VA_ARGS__); printf("\"\n"); exit(1);}
@@ -25,6 +26,7 @@
 
 #else
 
+#define EZ_TRACE(...) ((void) 0)
 #define EZ_INFO(...) ((void) 0)
 #define EZ_ERROR(...) ((void) 0)
 #define EZ_FATAL(...) ((void) 0)
