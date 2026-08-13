@@ -1,6 +1,8 @@
 #include <easyc.h>
 #include <time.h>
 
+#ifdef BENCHMARK
+
 float int_score(int x) { return (float)x; }
 
 double get_time() {
@@ -188,3 +190,5 @@ int main(int argc, const char** argv) {
 
     return 0;
 }
+
+#endif
