@@ -1,2 +1,6 @@
 INCLUDE .
 SOURCE .
+LINK m
+LINUX LINK pthread
+WINDOWS LINK winpthread
+WINDOWS LINK ws2_32
