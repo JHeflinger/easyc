@@ -2,7 +2,7 @@
 
 ## What
 
-EasyC is a small C library that simplifies a lot of common utils in C to make life as a C programmer easier! It includes all the essentials, such as logging, math, memory tracking, threads, data structures, and even some basic networking!
+easyc is a small C library that simplifies a lot of common utils in C to make life as a C programmer easier! It includes all the essentials, such as logging, math, memory tracking, threads, data structures, and even some basic networking!
 
 ## Why
 
@@ -15,3 +15,7 @@ This project uses my in-house C project manager tool, [tiny](https://github.com/
 ## Testing
 
 For sanity checking purposes and because I thought for once I should actually have good project practices, EasyC features a test suite to ensure that everything is working as intended. You can run these tests by using the `run.sh` script or `run.bat` script depending on your respective supported OS, or you can figure out how to compile it yourself by using the `test/main.c` file as the entrypoint.
+
+## Support
+
+easyc is cross platform, mainly for linux and windows systems. It does technically support mac, but I don't really have a mac to test/develop on, so you are probably more likely to run into bugs on that platform.
