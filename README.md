@@ -1,4 +1,4 @@
-# EasyC: A lightweight (mostly) crossplatform C utils library
+# easyc: A lightweight (mostly) crossplatform C utils library
 
 ## What
 
