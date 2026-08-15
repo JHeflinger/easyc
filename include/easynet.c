@@ -60,6 +60,9 @@ BOOL ez_init_network() {
 	s_ez_network_initialized = TRUE;
 	return TRUE;
 	#endif
+    #if defined(__linux__) || defined(__APPLE__)
+	signal(SIGPIPE, SIG_IGN);
+	#endif
 	s_ez_network_initialized = TRUE;
 	return TRUE;
 }

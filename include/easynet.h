@@ -35,6 +35,7 @@ BOOL ez_record_buffer(ez_Buffer* buffer, void* source, size_t sourcesize);
 #include <stdio.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 
 typedef int EZ_SOCKET;
 
