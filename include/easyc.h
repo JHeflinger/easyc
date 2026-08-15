@@ -13,5 +13,6 @@
 #include "easysort.h"
 #include "easyfile.h"
 #include "easyparse.h"
+#include "easyprofile.h"
 
 #endif
