@@ -441,7 +441,7 @@ int main() {
     ARRLIST_int_add(&slist, 3);
     ARRLIST_int_add(&slist, 4);
     EasySort_int(&slist, int_score);
-    EZTEST(slist.size != 5, "EasySort high first element size");
+    EZTEST(slist.size == 5, "EasySort high first element size");
     success = 1;
     for (size_t i = 1; i < slist.size; i++)
         success &= slist.data[i] >= slist.data[i - 1];
