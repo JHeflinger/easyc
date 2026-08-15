@@ -223,7 +223,7 @@ BOOL ez_open_server(ez_Server* server, uint16_t port) {
 			EZ_CLOSE_SOCKET(server->socket);
 			return FALSE;
 		}
-		if (listen(server->socket, (SOMAXCONN) == EZ_INVALID_SOCK)) {
+		if (listen(server->socket, SOMAXCONN) == EZ_INVALID_SOCK) {
 			EZ_ERROR("Unable to listen for connections");
 			EZ_CLOSE_SOCKET(server->socket);
 			return FALSE;
