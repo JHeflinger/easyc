@@ -104,9 +104,9 @@ BOOL ez_check_network() {
 	return TRUE;
 }
 
-Ipv4 ez_get_my_ip() {
+ez_Ipv4 ez_get_my_ip() {
 	ez_check_network();
-	Ipv4 ip = { 0 };
+	ez_Ipv4 ip = { 0 };
     struct sockaddr_in dest;
     struct sockaddr_in name;
     socklen_t namelen = sizeof(name);
@@ -385,10 +385,10 @@ BOOL ez_server_recieve(ez_Connection* connection, ez_Buffer* buffer) {
 	return TRUE;
 }
 
-Destination ez_server_recieve_from(ez_Server* server, ez_Buffer* buffer) {
+ez_Destination ez_server_recieve_from(ez_Server* server, ez_Buffer* buffer) {
 	struct sockaddr_in client_addr;
 	socklen_t addr_len = sizeof(client_addr);
-	Destination dest = { 0 };
+	ez_Destination dest = { 0 };
 	int recieved = recvfrom(server->socket, (char*)buffer->bytes, buffer->max_length, 0,
 		(struct sockaddr*)&client_addr, &addr_len);
 	if (recieved < 0) {
@@ -401,7 +401,7 @@ Destination ez_server_recieve_from(ez_Server* server, ez_Buffer* buffer) {
 	return dest;
 }
 
-Destination ez_server_recieve_from_timed(ez_Server* server, ez_Buffer* buffer, size_t timeout) {
+ez_Destination ez_server_recieve_from_timed(ez_Server* server, ez_Buffer* buffer, size_t timeout) {
 	fd_set readfds;
 	struct timeval tout;
 	FD_ZERO(&readfds);
@@ -410,13 +410,13 @@ Destination ez_server_recieve_from_timed(ez_Server* server, ez_Buffer* buffer, s
 	tout.tv_usec = timeout;
 	int found = select(server->socket + 1, &readfds, NULL, NULL, &tout);
 	if (found <= 0) {
-		Destination dest = { 0 };
+		ez_Destination dest = { 0 };
 		return dest;
 	}
 	return ez_server_recieve_from(server, buffer);
 }
 
-BOOL ez_server_throw(ez_Server* server, Destination destination, ez_Buffer* buffer) {
+BOOL ez_server_throw(ez_Server* server, ez_Destination destination, ez_Buffer* buffer) {
 	struct sockaddr_in dest_addr;
 	memset(&dest_addr, 0, sizeof(dest_addr));
 	dest_addr.sin_family = AF_INET;
@@ -465,7 +465,7 @@ ez_Client* ez_generate_client() {
 	return client;
 }
 
-BOOL ez_connect_client(ez_Client* client, Ipv4 address, uint16_t port) {
+BOOL ez_connect_client(ez_Client* client, ez_Ipv4 address, uint16_t port) {
 	ez_check_network();
 	if (client->open) {
 		EZ_ERROR("Unable to connect a client that's already connected");
@@ -485,7 +485,7 @@ BOOL ez_connect_client(ez_Client* client, Ipv4 address, uint16_t port) {
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons((u_short)(client->port));
-	memcpy(&client->address, &address, sizeof(Ipv4));
+	memcpy(&client->address, &address, sizeof(ez_Ipv4));
 	char addrstr[64];
 	sprintf(addrstr, "%d.%d.%d.%d",
 		 client->address.address[0],

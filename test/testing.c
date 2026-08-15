@@ -1,8 +1,7 @@
 #include <easyc.h>
-#include <math.h>
 
-int passed_tests = 0;
-int total_tests = 0;
+static int passed_tests = 0;
+static int total_tests = 0;
 
 #define EZTEST(condition, name) { \
 	total_tests++; \
@@ -33,13 +32,13 @@ typedef struct {
 	uint32_t d;
 } Packet;
 
-EZ_THREAD_RETURN_TYPE thread_function(EZ_THREAD_PARAMETER_TYPE params) {
+static EZ_THREAD_RETURN_TYPE thread_function(EZ_THREAD_PARAMETER_TYPE params) {
 	Params* p = (Params*)params;
 	*(p->sum) = p->a + p->b;
 	return 0;
 }
 
-EZ_THREAD_RETURN_TYPE unsafe_function(EZ_THREAD_PARAMETER_TYPE params) {
+static EZ_THREAD_RETURN_TYPE unsafe_function(EZ_THREAD_PARAMETER_TYPE params) {
 	Params* p = (Params*)params;
 	EZ_LOCK_MUTEX(p->mutex);
 	*(p->sum) = *(p->sum) + 1;
@@ -47,8 +46,8 @@ EZ_THREAD_RETURN_TYPE unsafe_function(EZ_THREAD_PARAMETER_TYPE params) {
 	return 0;
 }
 
-float int_score(int x) { return (float)x; }
-float int_score_neg(int x) { return -(float)x; }
+static float int_score(int x) { return (float)x; }
+static float int_score_neg(int x) { return -(float)x; }
 
 int main() {
 	// easybool tests
@@ -282,7 +281,7 @@ int main() {
 	EZTEST(EZ_INIT_NETWORK(), "Initialize network");
 	ez_Server* server = EZ_GENERATE_SERVER();
 	ez_Client* client = EZ_GENERATE_CLIENT();
-	Ipv4 address = {{127, 0, 0, 1}};
+	ez_Ipv4 address = {{127, 0, 0, 1}};
 	ez_Buffer* retbuf = EZ_GENERATE_BUFFER(1024);
 	EZTEST(EZ_OPEN_SERVER(server, 55000), "Open server");
 	EZTEST(EZ_CONNECT_CLIENT(client, address, 55000), "Connect client");
@@ -448,6 +447,59 @@ int main() {
     EZTEST(success, "EasySort high first element order");
     ARRLIST_int_clear(&slist);
     EZTEST(before_es_tests == EZ_ALLOCATED(), "EasySort memory leak");
+
+    // easyfile tests
+    size_t before_ef_tests = EZ_ALLOCATED();
+    EZTEST(ez_get_filetype("model.obj") == DOTOBJ, "EasyFile filetype obj");
+    EZTEST(ez_get_filetype("model.OBJ") == DOTOBJ, "EasyFile filetype obj uppercase");
+    EZTEST(ez_get_filetype("scene.prism") == DOTPRISM, "EasyFile filetype prism");
+    EZTEST(ez_get_filetype("shader.spv") == DOTSPV, "EasyFile filetype spv");
+    EZTEST(ez_get_filetype("material.mtl") == DOTMTL, "EasyFile filetype mtl");
+    EZTEST(ez_get_filetype("data.xml") == DOTXML, "EasyFile filetype xml");
+    EZTEST(ez_get_filetype("mesh.fbx") == DOTFBX, "EasyFile filetype fbx");
+    EZTEST(ez_get_filetype("readme.txt") == UNKNOWN, "EasyFile filetype unknown extension");
+    EZTEST(ez_get_filetype("archive.tar.gz") == UNKNOWN, "EasyFile filetype uses last extension only");
+    EZTEST(ez_get_filetype("/home/user/assets/model.obj") == DOTOBJ, "EasyFile filetype with unix directory");
+    EZTEST(ez_get_filetype("C:\\assets\\model.obj") == DOTOBJ, "EasyFile filetype with windows directory");
+    EZTEST(ez_get_filetype("assets/model.obj/notes.xml") == DOTXML, "EasyFile filetype dot in directory name");
+    EZTEST(strcmp(ez_strip_filename("/home/user/model.obj"), "model.obj") == 0, "EasyFile strip filename unix path");
+    EZTEST(strcmp(ez_strip_filename("C:\\Users\\name\\model.obj"), "model.obj") == 0, "EasyFile strip filename windows path");
+    EZTEST(ez_strip_filename("model.obj") == NULL, "EasyFile strip filename no directory");
+    EZTEST(ez_strip_filename("/home/user/") == NULL, "EasyFile strip filename trailing slash");
+    const char* ef_contents = "line one\nline two\nline three";
+    FILE* ef_fixture = fopen("ef_test_fixture.xml", "wb");
+    fwrite(ef_contents, 1, strlen(ef_contents), ef_fixture);
+    fclose(ef_fixture);
+    ez_File* ef_loaded = ez_load_file("ef_test_fixture.xml");
+    EZTEST(ef_loaded != NULL, "EasyFile load existing file");
+    EZTEST(ef_loaded->type == DOTXML, "EasyFile load detects filetype");
+    EZTEST(ef_loaded->size == strlen(ef_contents), "EasyFile load correct size");
+    EZTEST(memcmp(ef_loaded->data, ef_contents, ef_loaded->size) == 0, "EasyFile load correct data");
+    ez_File* ef_missing = ez_load_file("ef_definitely_does_not_exist.xml");
+    EZTEST(ef_missing == NULL, "EasyFile load missing file returns null");
+    FILE* ef_empty_fixture = fopen("ef_test_empty.xml", "wb");
+    fclose(ef_empty_fixture);
+    ez_File* ef_empty = ez_load_file("ef_test_empty.xml");
+    EZTEST(ef_empty != NULL, "EasyFile load empty file succeeds");
+    EZTEST(ef_empty->size == 0, "EasyFile load empty file size");
+    ez_free_file(ef_empty);
+    remove("ef_test_empty.xml");
+    ez_FileParser ef_parser = ez_parser(ef_loaded);
+    EZTEST(ef_parser.line == 0, "EasyFile parser initial line");
+    EZTEST(ef_parser.cursor == 0, "EasyFile parser initial cursor");
+    char ef_linebuf[64];
+    EZTEST(ez_next_line(&ef_parser, ef_linebuf, sizeof(ef_linebuf)), "EasyFile next line 1 success");
+    EZTEST(strcmp(ef_linebuf, "line one") == 0, "EasyFile next line 1 content");
+    EZTEST(ef_parser.line == 1, "EasyFile next line 1 count");
+    EZTEST(ez_next_line(&ef_parser, ef_linebuf, sizeof(ef_linebuf)), "EasyFile next line 2 success");
+    EZTEST(strcmp(ef_linebuf, "line two") == 0, "EasyFile next line 2 content");
+    EZTEST(ez_next_line(&ef_parser, ef_linebuf, sizeof(ef_linebuf)), "EasyFile next line 3 success");
+    EZTEST(strcmp(ef_linebuf, "line three") == 0, "EasyFile next line 3 content (no trailing newline)");
+    EZTEST(!ez_next_line(&ef_parser, ef_linebuf, sizeof(ef_linebuf)), "EasyFile next line exhausted");
+    ez_free_file(ef_loaded);
+    remove("ef_test_fixture.xml");
+
+    EZTEST(before_ef_tests == EZ_ALLOCATED(), "EasyFile memory leak");
 	printf("\nTest suite results: %s%d%s/%d tests passed\n", 
 		passed_tests == total_tests ? EZ_GREEN : EZ_RED, passed_tests, EZ_RESET, total_tests);
     if (passed_tests != total_tests) return -1;

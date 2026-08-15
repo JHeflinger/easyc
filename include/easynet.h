@@ -109,12 +109,12 @@ BOOL ez_check_network();
 
 typedef struct {
 	uint8_t address[4];
-} Ipv4;
+} ez_Ipv4;
 
 typedef struct {
-	Ipv4 address;
+	ez_Ipv4 address;
 	uint16_t port;
-} Destination;
+} ez_Destination;
 
 typedef struct {
 	uint16_t port;
@@ -128,7 +128,7 @@ typedef struct {
 	EZ_SOCKET socket;
 } ez_Connection;
 
-Ipv4 ez_get_my_ip();
+ez_Ipv4 ez_get_my_ip();
 
 #define EZ_GET_MY_IP() ez_get_my_ip()
 
@@ -141,9 +141,9 @@ BOOL ez_close_server(ez_Server* server);
 BOOL ez_clean_server(ez_Server* server);
 BOOL ez_server_ask(ez_Connection* connection, ez_Buffer* buffer);
 BOOL ez_server_recieve(ez_Connection* connection, ez_Buffer* buffer);
-Destination ez_server_recieve_from(ez_Server* server, ez_Buffer* buffer);
-Destination ez_server_recieve_from_timed(ez_Server* server, ez_Buffer* buffer, size_t timeout);
-BOOL ez_server_throw(ez_Server* server, Destination destination, ez_Buffer* buffer);
+ez_Destination ez_server_recieve_from(ez_Server* server, ez_Buffer* buffer);
+ez_Destination ez_server_recieve_from_timed(ez_Server* server, ez_Buffer* buffer, size_t timeout);
+BOOL ez_server_throw(ez_Server* server, ez_Destination destination, ez_Buffer* buffer);
 BOOL ez_server_send(ez_Connection* connection, ez_Buffer* buffer);
 
 #define EZ_GENERATE_SERVER() ez_generate_server()
@@ -161,14 +161,14 @@ BOOL ez_server_send(ez_Connection* connection, ez_Buffer* buffer);
 #define EZ_SERVER_SEND(connection, buffer) ez_server_send(connection, buffer)
 
 typedef struct {
-	Ipv4 address;
+	ez_Ipv4 address;
 	uint16_t port;
 	EZ_SOCKET socket;
 	BOOL open;
 } ez_Client;
 
 ez_Client* ez_generate_client();
-BOOL ez_connect_client(ez_Client* client, Ipv4 address, uint16_t port);
+BOOL ez_connect_client(ez_Client* client, ez_Ipv4 address, uint16_t port);
 BOOL ez_disconnect_client(ez_Client* client);
 BOOL ez_clean_client(ez_Client* client);
 BOOL ez_client_ask(ez_Client* client, ez_Buffer* buffer);

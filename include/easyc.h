@@ -11,5 +11,7 @@
 #include "easyhash.h"
 #include "easytime.h"
 #include "easysort.h"
+#include "easyfile.h"
+#include "easyparse.h"
 
 #endif

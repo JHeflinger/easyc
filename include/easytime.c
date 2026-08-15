@@ -51,12 +51,41 @@ void ez_sleep_ms(uint32_t ms) {
     Sleep(ms);
 }
 
+float ez_get_time() {
+    static LARGE_INTEGER frequency;
+    static LARGE_INTEGER start;
+    static int initialized = 0;
+    if (!initialized) {
+        QueryPerformanceFrequency(&frequency);
+        QueryPerformanceCounter(&start);
+        initialized = 1;
+    }
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (float)((double)(now.QuadPart - start.QuadPart) / (double)frequency.QuadPart);
+}
+
 #else
 
 #include <unistd.h>
 
 void ez_sleep_ms(uint32_t ms) {
     usleep(ms * 1000);
+}
+
+float ez_get_time() {
+    static struct timespec start;
+    static int initialized = 0;
+    if (!initialized) {
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        initialized = 1;
+    }
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return (float)(
+        (double)(now.tv_sec - start.tv_sec) +
+        (double)(now.tv_nsec - start.tv_nsec) / 1000000000.0
+    );
 }
 
 #endif

@@ -1,10 +1,8 @@
 #ifndef EASYBASICS_H
 #define EASYBASICS_H
 
-#include "easyobjects.h"
 #include "easysort.h"
 #include <stdlib.h>
-#include <stddef.h>
 
 DECLARE_ARRLIST(size_t);
 DECLARE_ARRLIST(int);

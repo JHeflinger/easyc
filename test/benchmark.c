@@ -3,15 +3,15 @@
 
 #ifdef BENCHMARK
 
-float int_score(int x) { return (float)x; }
+static float int_score(int x) { return (float)x; }
 
-double get_time() {
+static double get_time() {
     struct timespec ts;
     timespec_get(&ts, TIME_UTC);
     return ts.tv_sec * 1000.0 + ts.tv_nsec / 1e6;
 }
 
-double arraylist_carousel(size_t arrs, size_t depth) {
+static double arraylist_carousel(size_t arrs, size_t depth) {
     double time = get_time();
     ARRLIST_int* arrlists = EZ_ALLOC(arrs, sizeof(ARRLIST_int));
     for (size_t i = 0; i < depth; i++) {
@@ -25,22 +25,22 @@ double arraylist_carousel(size_t arrs, size_t depth) {
     return get_time() - time;
 }
 
-void fill_sorted(ARRLIST_int* list, size_t n) {
+static void fill_sorted(ARRLIST_int* list, size_t n) {
     ARRLIST_int_clear(list);
     for (size_t i = 0; i < n; i++) ARRLIST_int_add(list, (int)i);
 }
 
-void fill_reversed(ARRLIST_int* list, size_t n) {
+static void fill_reversed(ARRLIST_int* list, size_t n) {
     ARRLIST_int_clear(list);
     for (size_t i = n; i > 0; i--) ARRLIST_int_add(list, (int)i);
 }
 
-void fill_random(ARRLIST_int* list, size_t n) {
+static void fill_random(ARRLIST_int* list, size_t n) {
     ARRLIST_int_clear(list);
     for (size_t i = 0; i < n; i++) ARRLIST_int_add(list, rand());
 }
 
-void fill_nearly_sorted(ARRLIST_int* list, size_t n, int swap_pct) {
+static void fill_nearly_sorted(ARRLIST_int* list, size_t n, int swap_pct) {
     ARRLIST_int_clear(list);
     for (size_t i = 0; i < n; i++) ARRLIST_int_add(list, (int)i);
     size_t swaps = (n * swap_pct) / 100;
@@ -53,23 +53,23 @@ void fill_nearly_sorted(ARRLIST_int* list, size_t n, int swap_pct) {
     }
 }
 
-void fill_constant(ARRLIST_int* list, size_t n) {
+static void fill_constant(ARRLIST_int* list, size_t n) {
     ARRLIST_int_clear(list);
     for (size_t i = 0; i < n; i++) ARRLIST_int_add(list, 42);
 }
 
-void fill_single_outlier_front(ARRLIST_int* list, size_t n) {
+static void fill_single_outlier_front(ARRLIST_int* list, size_t n) {
     ARRLIST_int_clear(list);
     ARRLIST_int_add(list, (int)n * 9999);
     for (size_t i = 1; i < n; i++) ARRLIST_int_add(list, (int)i);
 }
 
-void fill_sawtooth(ARRLIST_int* list, size_t n, size_t period) {
+static void fill_sawtooth(ARRLIST_int* list, size_t n, size_t period) {
     ARRLIST_int_clear(list);
     for (size_t i = 0; i < n; i++) ARRLIST_int_add(list, (int)(i % period));
 }
 
-double bench_easysort(void (*fill)(ARRLIST_int*, size_t), size_t n, int runs) {
+static double bench_easysort(void (*fill)(ARRLIST_int*, size_t), size_t n, int runs) {
     ARRLIST_int list = { 0 };
     double total = 0.0;
     for (int r = 0; r < runs; r++) {
@@ -82,7 +82,7 @@ double bench_easysort(void (*fill)(ARRLIST_int*, size_t), size_t n, int runs) {
     return total / runs;
 }
 
-double bench_easysort_nearly(size_t n, int swap_pct, int runs) {
+static double bench_easysort_nearly(size_t n, int swap_pct, int runs) {
     ARRLIST_int list = { 0 };
     double total = 0.0;
     for (int r = 0; r < runs; r++) {
@@ -95,7 +95,7 @@ double bench_easysort_nearly(size_t n, int swap_pct, int runs) {
     return total / runs;
 }
 
-double bench_easysort_sawtooth(size_t n, size_t period, int runs) {
+static double bench_easysort_sawtooth(size_t n, size_t period, int runs) {
     ARRLIST_int list = { 0 };
     double total = 0.0;
     for (int r = 0; r < runs; r++) {

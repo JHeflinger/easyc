@@ -5,4 +5,6 @@
 
 void ez_sleep_ms(uint32_t ms);
 
+float ez_get_time();
+
 #endif
