@@ -24,7 +24,7 @@ if "%1"=="-u" (
 )
 
 :: run tests
-"./build/tiny_windows.exe -r"
+"./build/tiny_windows.exe" -r
 if !ERRORLEVEL! NEQ 0 (
     exit /b !ERRORLEVEL!
 )

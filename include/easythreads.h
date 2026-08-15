@@ -1,7 +1,7 @@
 #ifndef EASYTHREADS_H
 #define EASYTHREADS_H
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
 
 #include <pthread.h>
 
