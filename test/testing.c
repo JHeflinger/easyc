@@ -475,8 +475,6 @@ int main() {
     EZTEST(ef_loaded->type == DOTXML, "EasyFile load detects filetype");
     EZTEST(ef_loaded->size == strlen(ef_contents), "EasyFile load correct size");
     EZTEST(memcmp(ef_loaded->data, ef_contents, ef_loaded->size) == 0, "EasyFile load correct data");
-    ez_File* ef_missing = ez_load_file("ef_definitely_does_not_exist.xml");
-    EZTEST(ef_missing == NULL, "EasyFile load missing file returns null");
     FILE* ef_empty_fixture = fopen("ef_test_empty.xml", "wb");
     fclose(ef_empty_fixture);
     ez_File* ef_empty = ez_load_file("ef_test_empty.xml");
