@@ -23,15 +23,8 @@ if "%1"=="-u" (
     cd ..
 )
 
-:: run builder
-set PROD=
-if "%1"=="-p" (
-    set PROD=-prod
-)
-if "%2"=="-p" (
-    set PROD=-prod
-)
-"./build/tiny_windows.exe" %PROD%
+:: run tests
+"./build/tiny_windows.exe -r"
 if !ERRORLEVEL! NEQ 0 (
     exit /b !ERRORLEVEL!
 )
