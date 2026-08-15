@@ -18,12 +18,15 @@ jobs:
 
       - name: Run tests (Linux)
         if: runner.os == 'Linux'
-        run: bash test.sh
-
-      - name: Run tests (Windows)
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: test.bat
+        run: |
+          mkdir -p build
+          curl -sL -o build/tiny_linux.bin https://github.com/JHeflinger/tiny/raw/refs/heads/main/bin/tiny_linux.bin
+          chmod +x build/tiny_linux.bin
+          ./build/tiny_linux.bin -r 2>&1 | tee test_output.log
+          if grep -q "\[FAILED\]" test_output.log; then
+            echo "One or more tests failed"
+            exit 1
+          fi
 
       - name: Run tests (macOS)
         if: runner.os == 'macOS'
@@ -31,4 +34,21 @@ jobs:
           mkdir -p build
           curl -sL -o build/tiny_macos.bin https://github.com/JHeflinger/tiny/raw/refs/heads/main/bin/tiny_macos.bin
           chmod +x build/tiny_macos.bin
-          ./build/tiny_macos.bin -r
+          ./build/tiny_macos.bin -r 2>&1 | tee test_output.log
+          if grep -q "\[FAILED\]" test_output.log; then
+            echo "One or more tests failed"
+            exit 1
+          fi
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          Invoke-WebRequest -Uri "https://github.com/JHeflinger/tiny/raw/refs/heads/main/bin/tiny_windows.exe" -OutFile "build/tiny_windows.exe"
+          $output = & ".\build\tiny_windows.exe" -r 2>&1 | Tee-Object -Variable outVar
+          $output | Out-String | Write-Host
+          if ($output -match "\[FAILED\]") {
+            Write-Host "One or more tests failed"
+            exit 1
+          }
