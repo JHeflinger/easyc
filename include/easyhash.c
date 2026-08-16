@@ -54,3 +54,13 @@ uint64_t ez_hash_uint8_t(uint8_t x) {
 uint64_t ez_hash_int8_t(int8_t x) {
     return ez_hash_uint64_t((uint64_t)x);
 }
+
+uint64_t ez_hash_string(const char* str) {
+    uint64_t hash = 1469598103934665603ULL;
+    while (*str) {
+        hash ^= (uint8_t)*str;
+        hash *= 1099511628211ULL;
+        str++;
+    }
+    return hash;
+}

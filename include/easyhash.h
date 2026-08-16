@@ -29,4 +29,6 @@ uint64_t ez_hash_uint8_t(uint8_t x);
 
 uint64_t ez_hash_int8_t(int8_t x);
 
+uint64_t ez_hash_string(const char* str);
+
 #endif
