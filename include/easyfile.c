@@ -16,6 +16,7 @@ static const char* FileExtension(const char* path) {
 
 ez_FileType ez_get_filetype(const char* path) {
     const char* extension = FileExtension(path);
+    if (!extension) return UNKNOWN;
     if (strcmp(extension, "obj") == 0 || strcmp(extension, "OBJ") == 0) {
         return DOTOBJ;
     } else if (strcmp(extension, "prism") == 0 || strcmp(extension, "PRISM") == 0) {
