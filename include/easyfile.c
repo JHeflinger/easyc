@@ -153,13 +153,13 @@ BOOL ez_next_line(ez_FileParser* lp, char* buffer, size_t size) {
 BOOL ez_file_exists(const char* filename) {
 	#ifndef __WIN32
 		struct stat statbuf;
-        if (stat(file, &statbuf) != 0) {
+        if (stat(filename, &statbuf) != 0) {
             return 0;
         }
         return !S_ISDIR(statbuf.st_mode);
 	#else
 		struct _stat statbuf;
-        if (_stat(file, &statbuf) != 0) {
+        if (_stat(filename, &statbuf) != 0) {
             return 0;
         }
         return (statbuf.st_mode & _S_IFDIR) == 0;
