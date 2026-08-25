@@ -450,6 +450,7 @@ int main() {
 
     // easyfile tests
     size_t before_ef_tests = EZ_ALLOCATED();
+	EZTEST(ez_file_exists("this_does_not_exist.lol") == FALSE, "EasyFile file does not exist");
     EZTEST(ez_get_filetype("model.obj") == DOTOBJ, "EasyFile filetype obj");
     EZTEST(ez_get_filetype("model.OBJ") == DOTOBJ, "EasyFile filetype obj uppercase");
     EZTEST(ez_get_filetype("scene.prism") == DOTPRISM, "EasyFile filetype prism");
@@ -470,6 +471,7 @@ int main() {
     FILE* ef_fixture = fopen("ef_test_fixture.xml", "wb");
     fwrite(ef_contents, 1, strlen(ef_contents), ef_fixture);
     fclose(ef_fixture);
+	EZTEST(ez_file_exists("ef_test_fixture.xml") == TRUE, "EasyFile file does exist");
     ez_File* ef_loaded = ez_load_file("ef_test_fixture.xml");
     EZTEST(ef_loaded != NULL, "EasyFile load existing file");
     EZTEST(ef_loaded->type == DOTXML, "EasyFile load detects filetype");
