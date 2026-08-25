@@ -38,4 +38,6 @@ ez_FileParser ez_parser(ez_File* file);
 
 BOOL ez_next_line(ez_FileParser* lp, char* buffer, size_t size);
 
+BOOL ez_file_exists(const char* filename);
+
 #endif
