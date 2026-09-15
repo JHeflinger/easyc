@@ -77,6 +77,8 @@ ez_FileType ez_get_filetype(const char* path) {
         return DOTXML;
     } else if (strcmp(extension, "fbx") == 0 || strcmp(extension, "FBX") == 0) {
         return DOTFBX;
+    } else if (strcmp(extension, "ssg") == 0 || strcmp(extension, "ssg") == 0) {
+        return DOTSSG;
     }
     return UNKNOWN;
 }
