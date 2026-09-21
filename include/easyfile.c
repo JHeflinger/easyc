@@ -167,3 +167,119 @@ BOOL ez_file_exists(const char* filename) {
         return (statbuf.st_mode & _S_IFDIR) == 0;
 	#endif
 }
+
+BOOL ez_directory_exists(const char* dir) {
+    #ifndef __WIN32
+        struct stat statbuf;
+        if (stat(dir, &statbuf) != 0) {
+            return 0;
+        }
+        return S_ISDIR(statbuf.st_mode);
+    #else
+        struct _stat statbuf;
+        if (_stat(dir, &statbuf) != 0) {
+            return 0;
+        }
+        return (statbuf.st_mode & _S_IFDIR) != 0;
+    #endif
+}
+
+BOOL ez_walk_directories(const char* path, ez_FileHandler func) {
+    BOOL ret = TRUE;
+    #ifndef __WIN32
+        DIR *dir = opendir(path);
+        if (!dir) {
+            EZ_ERROR("Unable to open directory \"%s\"", path);
+            return FALSE;
+        }
+        struct dirent *entry;
+        while ((entry = readdir(dir)) != NULL) {
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+            char full_path[PATH_MAX];
+            snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+            struct stat statbuf;
+            if (stat(full_path, &statbuf) != 0) {
+                EZ_ERROR("Stat call failed");
+                return FALSE;
+            }
+            if (S_ISDIR(statbuf.st_mode)) {
+                func(full_path);
+                ret = ez_walk_directories(full_path, func);
+            }
+        }
+        closedir(dir);
+        return ret;
+    #else
+        char search_path[MAX_PATH];
+        snprintf(search_path, MAX_PATH, "%s/*", path);
+        WIN32_FIND_DATAA find_data;
+        HANDLE hFind = FindFirstFileA(search_path, &find_data);
+        if (hFind == INVALID_HANDLE_VALUE) {
+            EZ_ERROR("Unable to open directory \"%s\"", path);
+            return FALSE;
+        }
+        do {
+            const char *name = find_data.cFileName;
+            if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) continue;
+            char full_path[MAX_PATH];
+            snprintf(full_path, MAX_PATH, "%s/%s", path, name);
+            if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                func(full_path);
+                ret = ez_walk_directories(full_path, func);
+            }
+        } while (FindNextFileA(hFind, &find_data) != 0);
+        FindClose(hFind);
+        return ret;
+    #endif
+}
+
+BOOL ez_walk_files(const char* path, ez_FileHandler func) {
+    BOOL ret = TRUE;
+    #ifndef __WIN32
+        DIR *dir = opendir(path);
+        if (!dir) {
+            EZ_ERROR("Unable to open directory \"%s\"", path);
+            return FALSE;
+        }
+        struct dirent *entry;
+        while ((entry = readdir(dir)) != NULL) {
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+            char full_path[PATH_MAX];
+            snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+            struct stat statbuf;
+            if (stat(full_path, &statbuf) != 0) {
+                EZ_ERROR("Stat call failed");
+                return FALSE;
+            }
+            if (!S_ISDIR(statbuf.st_mode)) {
+                func(full_path);
+            } else {
+                ret = ez_walk_files(full_path, func);
+            }
+        }
+        closedir(dir);
+        return ret;
+    #else
+        char search_path[MAX_PATH];
+        snprintf(search_path, MAX_PATH, "%s/*", path);
+        WIN32_FIND_DATAA find_data;
+        HANDLE hFind = FindFirstFileA(search_path, &find_data);
+        if (hFind == INVALID_HANDLE_VALUE) {
+            EZ_ERROR("Unable to open directory \"%s\"", path);
+            return FALSE;
+        }
+        do {
+            const char *name = find_data.cFileName;
+            if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0) continue;
+            char full_path[MAX_PATH];
+            snprintf(full_path, MAX_PATH, "%s/%s", path, name);
+            if (!(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                func(full_path);
+            } else {
+                ret = ez_walk_files(full_path, func);
+            }
+        } while (FindNextFileA(hFind, &find_data) != 0);
+        FindClose(hFind);
+        return ret;
+    #endif
+}

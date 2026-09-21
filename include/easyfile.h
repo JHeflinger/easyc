@@ -27,6 +27,8 @@ typedef struct {
     size_t cursor;
 } ez_FileParser;
 
+typedef void (*ez_FileHandler)(const char*);
+
 ez_FileType ez_get_filetype(const char* path);
 
 const char* ez_strip_filename(const char* path);
@@ -40,5 +42,11 @@ ez_FileParser ez_parser(ez_File* file);
 BOOL ez_next_line(ez_FileParser* lp, char* buffer, size_t size);
 
 BOOL ez_file_exists(const char* filename);
+
+BOOL ez_directory_exists(const char* dir);
+
+BOOL ez_walk_directories(const char* path, ez_FileHandler func);
+
+BOOL ez_walk_files(const char* path, ez_FileHandler func);
 
 #endif
