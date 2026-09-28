@@ -77,8 +77,10 @@ ez_FileType ez_get_filetype(const char* path) {
         return DOTXML;
     } else if (strcmp(extension, "fbx") == 0 || strcmp(extension, "FBX") == 0) {
         return DOTFBX;
-    } else if (strcmp(extension, "ssg") == 0 || strcmp(extension, "ssg") == 0) {
+    } else if (strcmp(extension, "ssg") == 0 || strcmp(extension, "SSG") == 0) {
         return DOTSSG;
+    } else if (strcmp(extension, "ply") == 0 || strcmp(extension, "PLY") == 0) {
+        return DOTPLY;
     }
     return UNKNOWN;
 }

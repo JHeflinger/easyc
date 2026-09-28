@@ -12,7 +12,8 @@ typedef enum {
     DOTMTL,
     DOTXML,
     DOTFBX,
-    DOTSSG
+    DOTSSG,
+    DOTPLY
 } ez_FileType;
 
 typedef struct {
