@@ -17,6 +17,32 @@ BOOL ez_parse_float(const char* str, float* value) {
     return TRUE;
 }
 
+BOOL ez_parse_uint(const char* str, uint32_t* value) {
+    char *end;
+    unsigned long result;
+    errno = 0;
+    if (!str || !value) return FALSE;
+    result = strtoul(str, &end, 10);
+    if (end == str || errno == ERANGE) return FALSE;
+    while (isspace((unsigned char)*end)) end++;
+    if (*end != '\0') return FALSE;
+    *value = (uint32_t)result;
+    return TRUE;
+}
+
+BOOL ez_parse_lint(const char* str, int64_t* value) {
+    char *end;
+    long long result;
+    errno = 0;
+    if (!str || !value) return FALSE;
+    result = strtoll(str, &end, 10);
+    if (end == str || errno == ERANGE) return FALSE;
+    while (isspace((unsigned char)*end)) end++;
+    if (*end != '\0') return FALSE;
+    *value = (int64_t)result;
+    return TRUE;
+}
+
 BOOL ez_parse_size(const char* str, size_t* value) {
     char *end;
     unsigned long result;

@@ -4,8 +4,13 @@
 #include "easybool.h"
 #include "easymemory.h"
 #include <stddef.h>
+#include <stdint.h>
 
 BOOL ez_parse_float(const char* str, float* value);
+
+BOOL ez_parse_uint(const char* str, uint32_t* value);
+
+BOOL ez_parse_lint(const char* str, int64_t* value);
 
 BOOL ez_parse_size(const char* str, size_t* value);
 
