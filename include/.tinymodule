@@ -1,5 +1,4 @@
-INCLUDE .
-SOURCE .
+PROJECT .
 LINK m
 LINUX LINK pthread
 WINDOWS LINK winpthread
