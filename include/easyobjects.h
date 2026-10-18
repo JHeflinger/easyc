@@ -39,6 +39,15 @@ T ARRLIST_##T##_get(ARRLIST_##T* list, size_t index); \
 void ARRLIST_##T##_clear(ARRLIST_##T* list); \
 void ARRLIST_##T##_wipe(ARRLIST_##T* list);
 
+#define ARRLIST_REMOVE_RANGE(list, first, count) { \
+    size_t _rr_first = (first), _rr_count = (count); \
+    if (_rr_count > 0 && _rr_first + _rr_count <= (list).size) { \
+        memmove(&((list).data[_rr_first]), &((list).data[_rr_first + _rr_count]), \
+            ((list).size - _rr_first - _rr_count) * sizeof(*((list).data))); \
+        (list).size -= _rr_count; \
+    } \
+}
+
 #define IMPL_ARRLIST(T) \
 void ARRLIST_##T##_zero(ARRLIST_##T* list, size_t size) { \
     ARRLIST_##T##_clear(list); \
