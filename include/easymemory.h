@@ -12,5 +12,6 @@ size_t ez_allocated_bytes();
 #define EZ_ALLOC(numthings, thingsize) ez_allocate(numthings, thingsize)
 #define EZ_FREE(pointer) ez_free((void*)pointer)
 #define EZ_ALLOCATED() ez_allocated_bytes()
+#define EZ_MINALLOC(numthings, thingsize) ez_allocate((numthings) > 0 ? (numthings) : 1, thingsize);
 
 #endif
